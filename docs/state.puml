@@ -1,0 +1,50 @@
+@startuml
+[*] --> New : 0=New
+
+New --> PartiallyFilled : 部分成交 (1)
+New --> Filled : 全部成交 (2)
+New --> Cancelled : 撤单 (4)
+New --> Rejected : 拒绝 (8)
+
+PartiallyFilled --> Filled : 剩余全部成交 (2)
+PartiallyFilled --> Cancelled : 剩余撤单 (4)
+
+Filled --> [*]
+Cancelled --> [*]
+Rejected --> [*]
+
+@enduml
+
+
+
+@startuml
+interface State {
+  +name(): String
+  +reject(ctx: Context): void
+  +fill(ctx: Context, qty: int): void
+  +cancel(ctx: Context): void
+}
+
+class Context {
+  -state: State
+  -remaining: int
+  +setState(s: State): void
+  +fill(qty: int): void
+  +cancel(): void
+  +getStatus(): String
+}
+
+class NewState
+class PartiallyFilledState
+class FilledState
+class CancelledState
+class RejectedState
+
+Context *-- State
+State <|.. NewState
+State <|.. PartiallyFilledState
+State <|.. FilledState
+State <|.. CancelledState
+State <|.. RejectedState
+@enduml
+
