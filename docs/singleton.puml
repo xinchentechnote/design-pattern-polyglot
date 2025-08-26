@@ -1,0 +1,98 @@
+@startuml
+title 单例依赖对比: 难测 vs 易测
+
+package "直接依赖单例（难测）" {
+  class ServiceA {
+    +doWork()
+  }
+
+  class SingletonDB {
+    -SingletonDB()
+    +getInstance(): SingletonDB
+    +query()
+  }
+
+  ServiceA --> SingletonDB : 直接调用
+}
+
+package "依赖接口（易测）" {
+  interface IDatabase {
+    +query()
+  }
+
+  class RealDatabase implements IDatabase {
+    +query()
+  }
+
+  class MockDatabase implements IDatabase {
+    +query()
+  }
+
+  class ServiceB {
+    -db: IDatabase
+    +ServiceB(IDatabase)
+    +doWork()
+  }
+
+  ServiceB --> IDatabase
+  RealDatabase --> IDatabase
+  MockDatabase --> IDatabase
+}
+@enduml
+
+@startuml
+title 单元测试用例对比: 直接依赖单例 vs 依赖接口
+
+package "生产代码" {
+    class ServiceA {
+        - db: Database
+        + doSomething()
+    }
+
+    class Database {
+        + query()
+    }
+
+    class SingletonDatabase {
+        - static instance: SingletonDatabase
+        + getInstance(): SingletonDatabase
+        + query()
+    }
+
+    Database <|.. SingletonDatabase
+    ServiceA --> Database
+}
+
+package "测试代码" {
+    class ServiceATest_Singleton {
+        + testDoSomething()
+    }
+
+    class ServiceATest_Interface {
+        + testDoSomething()
+    }
+
+    interface DatabaseMock <<mock>> {
+        + query()
+    }
+
+    ServiceATest_Singleton --> ServiceA
+    ServiceATest_Interface --> ServiceA
+    ServiceATest_Interface --> DatabaseMock
+}
+
+note right of ServiceATest_Singleton
+  ❌ 直接依赖单例
+  - 无法替换真实数据库
+  - 测试需要依赖真实环境
+  - 难以隔离外部因素
+end note
+
+note right of ServiceATest_Interface
+  ✅ 依赖接口
+  - 可以注入 Mock/Stub
+  - 测试可控、快速
+  - 易于覆盖各种分支
+end note
+@enduml
+
