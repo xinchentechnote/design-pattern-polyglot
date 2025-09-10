@@ -1,0 +1,1 @@
+pytest -v checksum_service_test.py 
