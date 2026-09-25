@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dp-in-python"
+version = "0.1.0"
+description = "证券金融场景设计模式实战 - Python 实现"
+requires-python = ">=3.9"
+dependencies = ["crcmod"]
+
+[tool.setuptools]
+py-modules = ["checksum_service"]

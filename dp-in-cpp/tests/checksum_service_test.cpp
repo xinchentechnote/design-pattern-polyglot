@@ -17,6 +17,14 @@ TEST(ChecksumService, test_crc32) {
   EXPECT_EQ(0xCBF43926u, checksum);
 }
 
+TEST(ChecksumService, test_sum8_checksum) {
+  std::shared_ptr<IChecksumService> service =
+      std::make_shared<Sum8ChecksumService>();
+  uint8_t checksum = service->compute(
+      std::vector<uint8_t>{'1', '2', '3', '4', '5', '6', '7', '8', '9'});
+  EXPECT_EQ(221u, checksum);
+}
+
 TEST(ChecksumService, test_factory) {
   EXPECT_EQ(&ChecksumServiceFactory::getInstance(),
             &ChecksumServiceFactory::getInstance());

@@ -1,0 +1,6 @@
+Metadata-Version: 2.4
+Name: dp-in-python
+Version: 0.1.0
+Summary: 证券金融场景设计模式实战 - Python 实现
+Requires-Python: >=3.9
+Requires-Dist: crcmod

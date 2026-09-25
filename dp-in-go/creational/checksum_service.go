@@ -43,6 +43,22 @@ func (c *Crc32ChecksumService) Compute(data []byte) uint32 {
 	return crc32.ChecksumIEEE(data)
 }
 
+// Sum8ChecksumService 实现二进制协议累加和校验：字节求和后 mod 256
+type Sum8ChecksumService struct {
+}
+
+func (c *Sum8ChecksumService) Algorithm() string {
+	return "SUM8"
+}
+
+func (c *Sum8ChecksumService) Compute(data []byte) uint8 {
+	sum := 0
+	for _, b := range data {
+		sum += int(b)
+	}
+	return uint8(sum % 256)
+}
+
 type checksumServiceFactory struct {
 	services map[string]any
 }
@@ -57,6 +73,7 @@ func GetChecksumServiceFactory() *checksumServiceFactory {
 		instance = &checksumServiceFactory{
 			services: make(map[string]any),
 		}
+		instance.Register(&Sum8ChecksumService{})
 		instance.Register(&Crc16ChecksumService{})
 		instance.Register(&Crc32ChecksumService{})
 	})
@@ -65,6 +82,8 @@ func GetChecksumServiceFactory() *checksumServiceFactory {
 
 func (f *checksumServiceFactory) Register(service any) {
 	switch s := service.(type) {
+	case *Sum8ChecksumService:
+		f.services[s.Algorithm()] = s
 	case *Crc16ChecksumService:
 		f.services[s.Algorithm()] = s
 	case *Crc32ChecksumService:

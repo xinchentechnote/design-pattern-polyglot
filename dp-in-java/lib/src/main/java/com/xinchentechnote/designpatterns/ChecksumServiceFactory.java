@@ -9,6 +9,7 @@ public enum ChecksumServiceFactory {
     private Map<String, ChecksumService<?, ?>> services = new HashMap<>();
 
     ChecksumServiceFactory() {
+        register(new Sum8ChecksumService());
         register(new Crc16ChecksumService());
         register(new Crc32ChecksumService());
     }

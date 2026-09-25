@@ -60,6 +60,20 @@ impl ChecksumService for Crc32ChecksumService {
     }
 }
 
+/// 累加和校验（SUM8）：校验范围内所有字节求和后 mod 256，取低 8 位
+pub struct Sum8ChecksumService;
+
+impl ChecksumService for Sum8ChecksumService {
+    fn algorithm(&self) -> &'static str {
+        "SUM8"
+    }
+
+    fn compute(&self, input: &[u8]) -> Checksum {
+        let sum = input.iter().map(|&b| b as u64).sum::<u64>();
+        Checksum::U8((sum % 256) as u8)
+    }
+}
+
 struct ChecksumServiceFactory {
     cache: RwLock<HashMap<&'static str, Arc<dyn ChecksumService>>>,
 }
@@ -99,6 +113,7 @@ impl ChecksumServiceFactory {
 // Singleton factory instance
 pub static CHECKSUM_SERVICE_FACTORY: Lazy<ChecksumServiceFactory> = Lazy::new(|| {
     let mut factory = ChecksumServiceFactory::new();
+    factory.register(Arc::new(Sum8ChecksumService));
     factory.register(Arc::new(Crc16ChecksumService));
     factory.register(Arc::new(Crc32ChecksumService));
     factory
@@ -126,6 +141,25 @@ mod tests {
         match checksum {
             Checksum::U32(value) => assert_eq!(value, 0xCBF43926),
             _ => panic!("Expected U32 checksum"),
+        }
+    }
+    #[test]
+    fn test_sum8_checksum_service() {
+        let service = Sum8ChecksumService;
+        assert_eq!(service.algorithm(), "SUM8");
+        let checksum = service.compute(b"123456789");
+        match checksum {
+            Checksum::U8(value) => assert_eq!(value, 221),
+            _ => panic!("Expected U8 checksum"),
+        }
+    }
+    #[test]
+    fn test_sum8_checksum_binary_frame() {
+        // 二进制帧：CA 01 00 04 | 54 45 53 54 | <checksum>
+        let frame: &[u8] = &[0xCA, 0x01, 0x00, 0x04, 0x54, 0x45, 0x53, 0x54];
+        match Sum8ChecksumService.compute(frame) {
+            Checksum::U8(value) => assert_eq!(value, 0x0F),
+            _ => panic!("Expected U8 checksum"),
         }
     }
     #[test]

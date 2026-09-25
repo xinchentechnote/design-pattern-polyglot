@@ -42,11 +42,22 @@ class CRC32ChecksumService(ChecksumService):
 
     def compute(self, input: bytes) -> int:
         return zlib.crc32(input)
-    
+
+
+class Sum8ChecksumService(ChecksumService):
+    """二进制协议累加和校验（SUM8）：字节求和后 mod 256"""
+
+    def algorithm(self) -> str:
+        return "SUM8"
+
+    def compute(self, input: bytes) -> int:
+        return sum(input) % 256
+
 class ChecksumServiceFactory(metaclass=Singleton):
     
     def __init__(self):
         self._services = {
+            "SUM8": Sum8ChecksumService(),
             "CRC16": Crc16ChecksumService(),
             "CRC32": CRC32ChecksumService()
         }

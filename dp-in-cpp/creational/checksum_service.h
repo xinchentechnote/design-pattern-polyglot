@@ -53,6 +53,20 @@ public:
   }
 };
 
+// 二进制协议累加和校验（SUM8）：字节求和后 mod 256
+class Sum8ChecksumService : public IChecksumService {
+public:
+  std::string algorithm() const override { return "SUM8"; }
+
+  uint64_t compute(const std::vector<uint8_t> &input) const override {
+    uint64_t sum = 0;
+    for (uint8_t b : input) {
+      sum += b;
+    }
+    return sum % 256;
+  }
+};
+
 class ChecksumServiceFactory {
 public:
   static ChecksumServiceFactory &getInstance() { return instance_; }
@@ -99,6 +113,7 @@ public:
 private:
   static ChecksumServiceFactory instance_;
   ChecksumServiceFactory() {
+    services_["SUM8"] = std::make_shared<Sum8ChecksumService>();
     services_["CRC16"] = std::make_shared<Crc16ChecksumService>();
     services_["CRC32"] = std::make_shared<Crc32ChecksumService>();
   }

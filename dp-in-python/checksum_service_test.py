@@ -30,6 +30,12 @@ def test_crc16(factory):
     assert service.compute(data) == expected
 
 
+def test_sum8_checksum(factory):
+    data = b"123456789"
+    service = factory.get_service("SUM8")
+    assert service.compute(data) == 221
+
+
 class DummyChecksumService(ChecksumService):
     def algorithm(self) -> str:
         return "DUMMY"

@@ -24,6 +24,16 @@ func TestCrc32(t *testing.T) {
 	}
 }
 
+func TestSum8Checksum(t *testing.T) {
+	service := &Sum8ChecksumService{}
+	data := []byte{'1', '2', '3', '4', '5', '6', '7', '8', '9'}
+	result := service.Compute(data)
+	expected := uint8(221)
+	if result != expected {
+		t.Errorf("SUM8 checksum failed: got %d, want %d", result, expected)
+	}
+}
+
 func TestFactorySingleton(t *testing.T) {
 	f1 := GetChecksumServiceFactory()
 	f2 := GetChecksumServiceFactory()
