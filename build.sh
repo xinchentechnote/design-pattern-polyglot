@@ -218,7 +218,7 @@ python() {
   local pypath="$venv/bin/python"
   if phase_enabled test; then
     if "$pypath" -m pip install -q --disable-pip-version-check pytest crcmod &&
-       (cd "$dir" && "$pypath" -m pytest checksum_service_test.py -v); then
+       (cd "$dir" && "$pypath" -m pytest -v); then
       record python test PASS
     else
       record python test FAIL

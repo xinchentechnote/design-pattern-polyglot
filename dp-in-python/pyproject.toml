@@ -10,4 +10,4 @@ requires-python = ">=3.9"
 dependencies = ["crcmod"]
 
 [tool.setuptools]
-py-modules = ["checksum_service"]
+py-modules = ["checksum_service", "matching_engine"]

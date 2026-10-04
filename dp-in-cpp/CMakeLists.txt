@@ -9,7 +9,10 @@ set(FETCHCONTENT_BASE_DIR "$ENV{HOME}/_deps" CACHE PATH "Base directory for Fetc
 include(CTest)
 
 # 打包目标：静态库 libdesign_patterns.a
-add_library(design_patterns STATIC creational/checksum_service.cpp)
+add_library(design_patterns STATIC
+    creational/checksum_service.cpp
+    behavioral/matching_engine.cpp
+)
 target_include_directories(design_patterns PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (BUILD_TESTING)
@@ -24,6 +27,10 @@ if (BUILD_TESTING)
   add_executable(test_design_patterns tests/checksum_service_test.cpp)
   target_link_libraries(test_design_patterns design_patterns gtest gtest_main)
 
+  add_executable(test_matching_engine tests/matching_engine_test.cpp)
+  target_link_libraries(test_matching_engine design_patterns gtest gtest_main)
+
   include(GoogleTest)
   gtest_discover_tests(test_design_patterns)
+  gtest_discover_tests(test_matching_engine)
 endif()
