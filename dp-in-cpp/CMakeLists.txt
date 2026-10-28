@@ -12,6 +12,7 @@ include(CTest)
 add_library(design_patterns STATIC
     creational/checksum_service.cpp
     behavioral/matching_engine.cpp
+    behavioral/order_lifecycle.cpp
 )
 target_include_directories(design_patterns PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -30,7 +31,11 @@ if (BUILD_TESTING)
   add_executable(test_matching_engine tests/matching_engine_test.cpp)
   target_link_libraries(test_matching_engine design_patterns gtest gtest_main)
 
+  add_executable(test_order_lifecycle tests/order_lifecycle_test.cpp)
+  target_link_libraries(test_order_lifecycle design_patterns gtest gtest_main)
+
   include(GoogleTest)
   gtest_discover_tests(test_design_patterns)
   gtest_discover_tests(test_matching_engine)
+  gtest_discover_tests(test_order_lifecycle)
 endif()

@@ -73,10 +73,10 @@ phase_enabled() { case " $PHASES " in *" $1 "*) return 0 ;; *) return 1 ;; esac;
 toolchain_missing() {
   local lang=$1 tool=$2
   if [ "$STRICT" -eq 1 ]; then
-    fail "$lang: 缺少 $tool（--strict 模式，视为失败）"
+    fail "${lang}: 缺少 ${tool}（--strict 模式，视为失败）"
     for p in $PHASES; do record "$lang" "$p" FAIL; done
   else
-    warn "$lang: 缺少 $tool，跳过该语言"
+    warn "${lang}: 缺少 ${tool}，跳过该语言"
     for p in $PHASES; do record "$lang" "$p" SKIP; done
   fi
 }
