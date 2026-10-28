@@ -7,9 +7,12 @@ namespace lifecycle {
 // ---- OrderException：静态工厂按原因构造，消息与 Rust/Java 版逐字对齐 ----
 
 OrderException OrderException::illegalTransition(std::string action, OrderState from) {
-    return OrderException(Reason::IllegalTransition,
-                          "illegal transition: cannot " + action + " in state " + stateName(from),
-                          std::move(action), from, 0, 0, 0, 0, 0);
+    // 先在局部变量里拼好消息再 move：若直接在实参里 std::move(action)，
+    // GCC 从右到左求值实参会先掏空 action，消息里的操作名就丢了
+    // （Clang 从左到右则侥幸正确）。消息与 action 是两个独立对象，顺序不再有影响。
+    std::string message = "illegal transition: cannot " + action + " in state " + stateName(from);
+    return OrderException(Reason::IllegalTransition, std::move(message), std::move(action), from,
+                          0, 0, 0, 0, 0);
 }
 
 OrderException OrderException::overfill(uint64_t requested, uint64_t remaining) {
