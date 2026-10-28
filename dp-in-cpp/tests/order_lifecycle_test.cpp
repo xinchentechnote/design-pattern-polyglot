@@ -2,6 +2,7 @@
 #include "gtest/gtest.h"
 
 #include <functional>
+#include <memory>
 #include <string>
 
 using namespace dp::lifecycle;

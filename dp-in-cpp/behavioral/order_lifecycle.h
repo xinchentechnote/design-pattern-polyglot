@@ -5,6 +5,7 @@
 // 两个头文件不会出现在同一个编译单元。
 
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <stdexcept>
 #include <string>
